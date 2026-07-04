@@ -101,7 +101,7 @@ export async function onRequestGet(context) {
         try {
           entries.push(JSON.parse(value));
         } catch (e) {
-          // ignora entradas corrompidas/
+          // ignora entradas corrompidas
         }
       }
     }

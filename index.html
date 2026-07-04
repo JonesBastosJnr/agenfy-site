@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenfy — Agende, cobre e não perca clientes</title>
+<meta name="description" content="Agendamento online com Pix e lembrete por WhatsApp, feito para o mercado brasileiro. Entre na lista de espera do Agenfy.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --blue-900:#002d75;
+    --blue-700:#004AC1;
+    --blue-500:#007FDF;
+    --blue-300:#5BD1FF;
+    --blue-100:#EAF3FF;
+    --blue-50:#F5F9FF;
+    --ink:#10182B;
+    --muted:#5B6472;
+    --line:#E4EAF3;
+    --white:#ffffff;
+    --danger:#B3261E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:var(--white);
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{max-width:100%;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  a{color:inherit;}
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:40;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1080px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .nav-inner svg{height:24px;width:auto;display:block;}
+  .nav-cta{
+    background:linear-gradient(135deg, var(--blue-700), var(--blue-500));
+    color:#fff;border:none;border-radius:999px;
+    padding:10px 20px;font-size:13.5px;font-weight:700;
+    cursor:pointer;font-family:'Inter',sans-serif;
+    box-shadow:0 8px 18px -10px rgba(0,74,193,0.5);
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:76px 0 60px;
+    overflow:hidden;
+    background:
+      radial-gradient(900px 480px at 82% -8%, rgba(91,209,255,0.30), transparent 60%),
+      radial-gradient(700px 420px at 8% 100%, rgba(0,74,193,0.10), transparent 60%),
+      var(--blue-50);
+  }
+  .hero-inner{
+    max-width:1080px;margin:0 auto;padding:0 24px;
+    display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:12.5px;font-weight:700;color:var(--blue-700);
+    background:var(--blue-100);
+    padding:6px 13px;border-radius:999px;
+    margin-bottom:20px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-500);}
+
+  h1.headline{
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:clamp(32px, 4.4vw, 50px);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin:0 0 20px;
+    color:var(--ink);
+  }
+  h1.headline em{
+    font-style:normal;
+    background:linear-gradient(135deg, var(--blue-700), var(--blue-500));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  p.lede{
+    font-size:17.5px;
+    line-height:1.6;
+    color:var(--muted);
+    margin:0 0 32px;
+    max-width:480px;
+  }
+
+  form.waitlist{
+    display:flex;gap:10px;max-width:460px;
+    margin-bottom:14px;
+  }
+  form.waitlist input[type=email]{
+    flex:1;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:#fff;
+  }
+  form.waitlist input[type=email]:focus{
+    outline:2px solid var(--blue-500);outline-offset:1px;border-color:var(--blue-500);
+  }
+  .btn-primary{
+    background:linear-gradient(135deg, var(--blue-700), var(--blue-500));
+    color:#fff;border:none;border-radius:12px;
+    padding:14px 24px;font-size:15px;font-weight:700;
+    cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;
+    box-shadow:0 12px 26px -12px rgba(0,74,193,0.55);
+    transition:filter .15s ease, transform .15s ease;
+  }
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn-primary:active{transform:scale(.98);}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+
+  .form-note{font-size:12.5px;color:var(--muted);}
+  .form-note b{color:var(--blue-700);}
+  .form-error{color:var(--danger);font-size:12.5px;margin:-4px 0 10px;display:none;}
+  .form-success{
+    display:none;
+    align-items:center;gap:10px;
+    background:var(--blue-100);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--blue-900);
+    max-width:460px;
+    margin-bottom:14px;
+  }
+  .form-success svg{width:18px;height:18px;flex-shrink:0;}
+
+  .social-proof{
+    display:flex;align-items:center;gap:10px;
+    margin-top:22px;font-size:13px;color:var(--muted);
+  }
+  .avatars{display:flex;}
+  .avatars span{
+    width:26px;height:26px;border-radius:50%;
+    border:2px solid #fff;
+    margin-left:-8px;
+    background:linear-gradient(135deg, var(--blue-700), var(--blue-300));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:10px;font-weight:700;font-family:'Manrope',sans-serif;
+  }
+  .avatars span:first-child{margin-left:0;}
+
+  /* hero visual: mini booking card */
+  .hero-visual{position:relative;}
+  .float-card{
+    background:#fff;border-radius:20px;
+    border:1px solid var(--line);
+    box-shadow:0 30px 60px -25px rgba(0,45,117,0.35);
+    padding:22px;
+    max-width:320px;margin:0 auto;
+    position:relative;
+  }
+  .float-card .avatar{
+    width:46px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg, var(--blue-700), var(--blue-300));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-family:'Manrope',sans-serif;font-weight:800;font-size:16px;
+    margin-bottom:10px;
+  }
+  .float-card .fn{font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;margin:0;}
+  .float-card .fr{font-size:12px;color:var(--muted);margin:2px 0 14px;}
+  .float-card .fe{
+    display:flex;justify-content:space-between;align-items:center;
+    border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px;font-size:12.5px;
+  }
+  .float-card .fe b{font-weight:700;}
+  .float-card .fe span.price{color:var(--blue-700);font-weight:800;font-family:'Manrope',sans-serif;}
+  .badge-pill{
+    position:absolute;
+    background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:9px 14px;font-size:12px;font-weight:700;
+    box-shadow:0 12px 24px -14px rgba(0,45,117,0.3);
+    display:flex;align-items:center;gap:7px;
+  }
+  .badge-pill.b1{top:-6px;right:-18px;color:var(--blue-700);}
+  .badge-pill.b2{bottom:14px;left:-28px;color:#0F9D58;}
+  .badge-pill svg{width:14px;height:14px;}
+  @media (prefers-reduced-motion: no-preference){
+    .badge-pill{animation:floaty 3.4s ease-in-out infinite;}
+    .badge-pill.b2{animation-delay:.6s;}
+  }
+  @keyframes floaty{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+  }
+
+  /* ---------- pain points ---------- */
+  section.pains{padding:88px 0 20px;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 48px;}
+  .section-eyebrow{
+    font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--blue-500);margin:0 0 10px;
+  }
+  h2.section-title{
+    font-family:'Manrope',sans-serif;font-weight:800;
+    font-size:clamp(24px,3vw,32px);margin:0 0 12px;line-height:1.2;
+  }
+  p.section-sub{color:var(--muted);font-size:15.5px;line-height:1.6;margin:0;}
+
+  .pain-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  }
+  .pain-card{
+    border:1px solid var(--line);border-radius:16px;padding:26px 22px;
+  }
+  .pain-card .pi{
+    width:42px;height:42px;border-radius:11px;
+    background:var(--blue-100);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;
+  }
+  .pain-card .pi svg{width:21px;height:21px;}
+  .pain-card h3{font-size:16px;font-weight:700;margin:0 0 8px;font-family:'Inter',sans-serif;}
+  .pain-card p{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0;}
+
+  /* ---------- calculator (signature) ---------- */
+  section.calc{padding:70px 0;}
+  .calc-box{
+    background:linear-gradient(135deg, var(--blue-900), var(--blue-700) 55%, var(--blue-500));
+    border-radius:24px;
+    padding:44px 40px;
+    color:#fff;
+    display:grid;grid-template-columns:0.95fr 1.05fr;gap:44px;align-items:center;
+  }
+  .calc-left .section-eyebrow{color:var(--blue-300);}
+  .calc-left h2{color:#fff;}
+  .calc-left p{color:rgba(255,255,255,0.78);font-size:14.5px;line-height:1.6;}
+
+  .calc-panel{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:18px;padding:26px 26px 22px;
+    backdrop-filter:blur(6px);
+  }
+  .calc-row{margin-bottom:18px;}
+  .calc-row label{
+    display:flex;justify-content:space-between;
+    font-size:12.5px;font-weight:700;margin-bottom:10px;color:rgba(255,255,255,0.85);
+  }
+  .calc-row label span.v{color:#fff;font-family:'Manrope',sans-serif;font-weight:800;}
+  input[type=range]{
+    width:100%;-webkit-appearance:none;height:5px;border-radius:3px;
+    background:rgba(255,255,255,0.25);outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.25);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:18px;height:18px;border-radius:50%;background:#fff;border:none;cursor:pointer;
+  }
+  .calc-result{
+    margin-top:20px;padding-top:20px;
+    border-top:1px solid rgba(255,255,255,0.2);
+    text-align:center;
+  }
+  .calc-result .rl{font-size:12px;color:rgba(255,255,255,0.75);margin-bottom:4px;}
+  .calc-result .rv{font-family:'Manrope',sans-serif;font-weight:800;font-size:34px;color:#fff;}
+  .calc-result .rs{font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px;}
+
+  /* ---------- how it works ---------- */
+  section.how{padding:90px 0;}
+  .how-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:28px;
+    margin-top:8px;
+  }
+  .how-step{position:relative;padding-left:0;}
+  .how-num{
+    font-family:'Manrope',sans-serif;font-weight:800;font-size:13px;
+    color:var(--blue-700);background:var(--blue-100);
+    width:30px;height:30px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;
+  }
+  .how-step h3{font-size:16.5px;font-weight:700;margin:0 0 8px;}
+  .how-step p{font-size:13.5px;color:var(--muted);line-height:1.6;margin:0;}
+
+  /* ---------- final CTA ---------- */
+  section.final-cta{
+    padding:80px 0 100px;
+  }
+  .cta-box{
+    background:var(--blue-50);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:56px 40px;
+    text-align:center;
+  }
+  .cta-box h2{
+    font-family:'Manrope',sans-serif;font-weight:800;
+    font-size:clamp(24px,3.4vw,32px);margin:0 0 14px;
+  }
+  .cta-box p{color:var(--muted);font-size:15px;margin:0 0 30px;}
+  form.waitlist.centered{margin:0 auto 10px;justify-content:center;}
+  .form-success.centered, .form-error.centered{margin-left:auto;margin-right:auto;}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:32px 0;
+    text-align:center;
+  }
+  footer svg{height:20px;margin-bottom:10px;}
+  footer p{font-size:12.5px;color:var(--muted);margin:0;}
+
+  @media (max-width: 860px){
+    .hero-inner{grid-template-columns:1fr;gap:44px;}
+    .hero-visual{order:-1;}
+    .pain-grid{grid-template-columns:1fr;}
+    .how-grid{grid-template-columns:1fr;}
+    .calc-box{grid-template-columns:1fr;padding:32px 24px;}
+    form.waitlist{flex-direction:column;}
+    .badge-pill{display:none;}
+  }
+
+  button:focus-visible, input:focus-visible{
+    outline:2px solid var(--blue-700);outline-offset:2px;
+  }
+  .hp-field{
+    position:absolute !important;
+    width:1px;height:1px;
+    padding:0;margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <svg viewBox="0 0 597.58 158.84" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gnav" x1="29.09" y1="34.88" x2="49.71" y2="120.12" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#004ac1"/><stop offset="1" stop-color="#007fdf"/>
+        </linearGradient>
+      </defs>
+      <g fill="#004ac1">
+        <path d="M238,120.58c-1.31-3.83-2.67-7.61-4.07-11.34-1.4-3.73-2.76-7.56-4.07-11.48h-40.97c-1.31,3.92-2.64,7.77-4,11.55-1.36,3.78-2.69,7.54-4,11.27h-18.34c3.63-10.36,7.09-19.93,10.35-28.7,3.26-8.77,6.46-17.08,9.58-24.92,3.12-7.84,6.22-15.31,9.3-22.4,3.08-7.09,6.25-14.09,9.51-21h16.84c3.27,6.91,6.44,13.91,9.52,21,3.08,7.09,6.18,14.56,9.31,22.4,3.13,7.84,6.35,16.15,9.66,24.92,3.31,8.77,6.79,18.34,10.43,28.7h-19.04ZM209.38,42.32c-2.15,4.95-4.6,10.97-7.35,18.06-2.75,7.09-5.62,14.79-8.61,23.1h31.91c-2.99-8.31-5.88-16.05-8.68-23.24-2.8-7.19-5.23-13.16-7.28-17.92Z"/>
+        <path d="M318.48,113.16c0,11.67-2.96,20.21-8.89,25.62-5.93,5.41-15,8.12-27.22,8.12-4.48,0-8.84-.37-13.09-1.12-4.25-.75-8.1-1.73-11.55-2.94l3.08-14.42c2.89,1.21,6.18,2.19,9.87,2.94,3.68.75,7.67,1.12,11.97,1.12,6.81,0,11.66-1.4,14.56-4.2,2.89-2.8,4.34-6.95,4.34-12.46v-2.8c-1.68.84-3.9,1.68-6.65,2.52-2.75.84-5.9,1.26-9.45,1.26-4.67,0-8.94-.75-12.81-2.24-3.87-1.49-7.19-3.69-9.94-6.58-2.75-2.89-4.9-6.51-6.44-10.85-1.54-4.34-2.31-9.36-2.31-15.05,0-5.32.82-10.22,2.45-14.7,1.63-4.48,4.01-8.31,7.14-11.48,3.13-3.17,6.93-5.65,11.41-7.42,4.48-1.77,9.56-2.66,15.26-2.66s10.73.42,15.68,1.26c4.94.84,9.14,1.73,12.6,2.66v63.42ZM271.31,82.08c0,7.19,1.56,12.44,4.69,15.75,3.13,3.31,7.16,4.97,12.11,4.97,2.71,0,5.25-.37,7.63-1.12,2.38-.75,4.32-1.63,5.81-2.66v-37.94c-1.21-.28-2.71-.54-4.48-.77-1.77-.23-4.01-.35-6.72-.35-6.16,0-10.87,2.03-14.14,6.09-3.27,4.06-4.9,9.4-4.9,16.03Z"/>
+        <path d="M327.58,84.32c0-6.44.96-12.09,2.87-16.94,1.91-4.85,4.46-8.89,7.63-12.11,3.17-3.22,6.81-5.65,10.92-7.28,4.1-1.63,8.3-2.45,12.6-2.45,10.08,0,17.94,3.13,23.58,9.38,5.65,6.25,8.47,15.59,8.47,28,0,.93-.02,1.98-.07,3.15-.05,1.17-.12,2.22-.21,3.15h-48.29c.47,5.88,2.54,10.43,6.23,13.65,3.68,3.22,9.03,4.83,16.03,4.83,4.1,0,7.86-.37,11.27-1.12,3.41-.75,6.09-1.54,8.05-2.38l2.24,13.86c-.93.47-2.22.96-3.85,1.47-1.63.51-3.5.98-5.6,1.4-2.1.42-4.36.77-6.79,1.05-2.43.28-4.9.42-7.42.42-6.44,0-12.04-.96-16.8-2.87-4.76-1.91-8.68-4.57-11.76-7.98-3.08-3.41-5.37-7.42-6.86-12.04-1.49-4.62-2.24-9.68-2.24-15.19ZM376.71,76.76c0-2.33-.33-4.55-.98-6.65-.65-2.1-1.61-3.92-2.87-5.46-1.26-1.54-2.8-2.75-4.62-3.64-1.82-.89-3.99-1.33-6.51-1.33s-4.9.49-6.86,1.47c-1.96.98-3.62,2.26-4.97,3.85-1.35,1.59-2.4,3.41-3.15,5.46-.75,2.05-1.26,4.15-1.54,6.3h31.49Z"/>
+        <path d="M403.16,49.74c3.26-.93,7.51-1.82,12.74-2.66,5.22-.84,11.01-1.26,17.36-1.26,5.97,0,10.96.82,14.98,2.45,4.01,1.63,7.21,3.92,9.59,6.86s4.06,6.49,5.04,10.64c.98,4.15,1.47,8.7,1.47,13.65v41.16h-16.94v-38.5c0-3.92-.26-7.26-.77-10.01-.51-2.75-1.35-4.99-2.52-6.72-1.17-1.73-2.75-2.99-4.76-3.78-2.01-.79-4.46-1.19-7.35-1.19-2.15,0-4.39.14-6.72.42-2.33.28-4.06.51-5.18.7v59.08h-16.94V49.74Z"/>
+        <path d="M506.46,11.94c3.92,0,7.37.35,10.36,1.05,2.99.7,5.22,1.33,6.72,1.89l-3.22,14c-1.59-.75-3.43-1.35-5.53-1.82-2.1-.47-4.36-.7-6.79-.7-2.71,0-4.99.4-6.86,1.19-1.87.79-3.36,1.89-4.48,3.29s-1.91,3.1-2.38,5.11c-.47,2.01-.7,4.18-.7,6.51v4.9h26.59v14.14h-26.59v59.08h-16.94V42.18c0-9.43,2.47-16.82,7.42-22.19,4.94-5.37,12.41-8.05,22.39-8.05Z"/>
+        <path d="M597.58,47.36c-7.55,27.81-16.3,53.01-26.27,75.6-1.87,4.2-3.78,7.79-5.74,10.78-1.96,2.99-4.16,5.46-6.59,7.42-2.43,1.96-5.14,3.38-8.13,4.27-2.99.89-6.44,1.33-10.37,1.33-2.62,0-5.21-.28-7.78-.84-2.57-.56-4.51-1.17-5.82-1.82l3.08-13.58c3.37,1.31,6.7,1.96,9.98,1.96,4.41,0,7.85-1.05,10.33-3.15,2.48-2.1,4.66-5.34,6.54-9.73-5.34-10.27-10.47-21.47-15.39-33.6-4.92-12.13-9.3-25.01-13.14-38.64h18.06c.94,3.92,2.08,8.17,3.44,12.74,1.36,4.57,2.83,9.22,4.43,13.93,1.59,4.71,3.28,9.4,5.06,14.07,1.78,4.67,3.56,9.01,5.34,13.02,2.97-8.31,5.76-17.15,8.36-26.53,2.6-9.38,4.97-18.46,7.1-27.23h17.5Z"/>
+      </g>
+      <g>
+        <path fill="#5bd1ff" d="M125.82,74.2c-1.94-20.81-13.23-38.34-31.07-48.91-16.7-9.89-37.86-10.99-55.82-3.6-.78,2.17.64,3.97.66,5.9l.22,31.38c12.73-13.2,32.44-13.17,44.7-1.85,5.53,5.11,9.46,12.48,9.62,19.77v51.62c.07,16.45,15.26,31.4,31.35,30.27.21-.2.79-.51.78-1.17l-.19-46.11c-.05-12.69.91-24.82-.25-37.3Z"/>
+        <path fill="url(#gnav)" d="M86.27,100.41c-12.35,13.11-31.91,13.76-44.91,1.45-4.72-4.47-7.5-10.79-9-17.29l-.11-55.73C29.9,12.08,17.19.05,0,0l.73,84.81c1.65,24.89,18.74,45.53,41.26,53.66,15.1,5.45,30.73,4.8,45.69-1.17-.98-4.24-1.21-8.23-1.24-12.7l-.18-24.2Z"/>
+      </g>
+    </svg>
+    <button class="nav-cta" onclick="scrollToForm()">Entrar na lista de espera</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Em breve · vagas limitadas no lançamento</div>
+      <h1 class="headline">Menos falta,<br><em>mais faturamento.</em></h1>
+      <p class="lede">Agenfy é o agendamento online feito para o Brasil: seus clientes marcam, pagam com Pix e recebem lembrete por WhatsApp — tudo automático, sem trocar mais mensagem para fechar horário.</p>
+
+      <form class="waitlist" id="waitlistForm" novalidate>
+        <input type="text" name="company" id="hp1" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="email" id="emailInput" placeholder="seu@email.com" required aria-label="Seu e-mail">
+        <button type="submit" class="btn-primary" id="submitBtn">Entrar na lista</button>
+      </form>
+      <p class="form-error" id="formError">Digite um e-mail válido para continuar.</p>
+      <div class="form-success" id="formSuccess">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="#004AC1" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9" stroke="#004AC1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Você entrou na lista! Avisamos assim que abrirmos seu acesso.</span>
+      </div>
+      <p class="form-note">Sem spam. <b>Só um e-mail quando abrirmos vagas</b> para o seu tipo de negócio.</p>
+
+      <div class="social-proof">
+        <div class="avatars"><span>CM</span><span>RT</span><span>MC</span></div>
+        <span>Psicólogos, clínicas e consultores já na lista de espera</span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="float-card">
+        <div class="avatar">CM</div>
+        <p class="fn">Dra. Carla Mendes</p>
+        <p class="fr">Psicóloga Clínica</p>
+        <div class="fe"><b>Sessão de Terapia · 50 min</b><span class="price">R$ 150</span></div>
+        <div class="fe"><b>Primeira Consulta · 60 min</b><span class="price">R$ 180</span></div>
+        <div class="badge-pill b1">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="#004AC1" stroke-width="2"/><path d="M8 12.5l2.5 2.5L16 9" stroke="#004AC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Pago via Pix
+        </div>
+        <div class="badge-pill b2">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="#0F9D58" stroke-width="2"/><path d="M12 7v5l3 2" stroke="#0F9D58" stroke-width="2" stroke-linecap="round"/></svg>
+          Lembrete no WhatsApp
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pains">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="section-eyebrow">O problema</p>
+      <h2 class="section-title">Sua agenda não devia ser um segundo emprego</h2>
+      <p class="section-sub">Se marcar horário por WhatsApp já virou trabalho manual todos os dias, o problema não é você — é a ferramenta errada.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pi"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h16M4 18h10" stroke="#004AC1" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Agenda cheia de idas e vindas</h3>
+        <p>Cada agendamento vira uma troca de mensagens. Tempo que devia ir para o atendimento, vai para negociar horário.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pi"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 2" stroke="#004AC1" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#004AC1" stroke-width="2"/></svg></div>
+        <h3>Falta do cliente sem aviso</h3>
+        <p>O horário fica reservado, ninguém aparece, e a vaga não volta. É prejuízo direto, todo mês.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pi"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10h18M7 15h4" stroke="#004AC1" stroke-width="2" stroke-linecap="round"/><rect x="3" y="6" width="18" height="13" rx="2.5" stroke="#004AC1" stroke-width="2"/></svg></div>
+        <h3>Cobrar antes do atendimento é difícil</h3>
+        <p>Sem um link de pagamento junto do agendamento, cobrar antecipado vira mais uma etapa manual — ou simplesmente não acontece.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="calc">
+  <div class="wrap">
+    <div class="calc-box">
+      <div class="calc-left">
+        <p class="section-eyebrow">Faça as contas</p>
+        <h2 class="section-title">Quanto o no-show custa pra você?</h2>
+        <p>Mexa nos números abaixo e veja uma estimativa de quanto sua agenda perde por ano só com faltas — antes mesmo de contar o tempo gasto reorganizando horário.</p>
+      </div>
+      <div class="calc-panel">
+        <div class="calc-row">
+          <label>Faltas por mês <span class="v" id="noshowVal">6</span></label>
+          <input type="range" id="noshowRange" min="0" max="30" value="6">
+        </div>
+        <div class="calc-row">
+          <label>Valor médio do atendimento <span class="v" id="ticketVal">R$ 150</span></label>
+          <input type="range" id="ticketRange" min="50" max="500" step="10" value="150">
+        </div>
+        <div class="calc-result">
+          <div class="rl">Prejuízo estimado por ano</div>
+          <div class="rv" id="lossResult">R$ 10.800</div>
+          <div class="rs">6 faltas × R$ 150 × 12 meses</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="section-eyebrow">Como funciona</p>
+      <h2 class="section-title">Três passos, sem enrolação</h2>
+      <p class="section-sub">Você configura uma vez. Seus clientes agendam, pagam e recebem lembrete sozinhos, todos os dias.</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">01</div>
+        <h3>Crie seu link de agendamento</h3>
+        <p>Defina seus horários e tipos de atendimento. Seu link fica pronto para compartilhar no WhatsApp e no Instagram.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">02</div>
+        <h3>Cliente agenda e paga com Pix</h3>
+        <p>Sem trocar mensagem: a pessoa escolhe o horário, paga na hora e o agendamento já entra confirmado na sua agenda.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">03</div>
+        <h3>O lembrete de WhatsApp faz o resto</h3>
+        <p>24h e 1h antes, seu cliente recebe um lembrete automático — reduzindo faltas sem você precisar cobrar ninguém.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <div class="cta-box">
+      <h2>Entre na lista de espera do Agenfy</h2>
+      <p>Avisamos em primeira mão quando abrirmos as vagas — com uma condição especial para quem entrou antes do lançamento.</p>
+      <form class="waitlist centered" id="waitlistForm2" novalidate>
+        <input type="text" name="company" id="hp2" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="email" id="emailInput2" placeholder="seu@email.com" required aria-label="Seu e-mail">
+        <button type="submit" class="btn-primary" id="submitBtn2">Entrar na lista</button>
+      </form>
+      <p class="form-error centered" id="formError2">Digite um e-mail válido para continuar.</p>
+      <div class="form-success centered" id="formSuccess2">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="#004AC1" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9" stroke="#004AC1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Você entrou na lista! Avisamos assim que abrirmos seu acesso.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <svg viewBox="0 0 597.58 158.84" xmlns="http://www.w3.org/2000/svg" style="height:20px;">
+      <g fill="#004ac1">
+        <path d="M238,120.58c-1.31-3.83-2.67-7.61-4.07-11.34-1.4-3.73-2.76-7.56-4.07-11.48h-40.97c-1.31,3.92-2.64,7.77-4,11.55-1.36,3.78-2.69,7.54-4,11.27h-18.34c3.63-10.36,7.09-19.93,10.35-28.7,3.26-8.77,6.46-17.08,9.58-24.92,3.12-7.84,6.22-15.31,9.3-22.4,3.08-7.09,6.25-14.09,9.51-21h16.84c3.27,6.91,6.44,13.91,9.52,21,3.08,7.09,6.18,14.56,9.31,22.4,3.13,7.84,6.35,16.15,9.66,24.92,3.31,8.77,6.79,18.34,10.43,28.7h-19.04ZM209.38,42.32c-2.15,4.95-4.6,10.97-7.35,18.06-2.75,7.09-5.62,14.79-8.61,23.1h31.91c-2.99-8.31-5.88-16.05-8.68-23.24-2.8-7.19-5.23-13.16-7.28-17.92Z"/>
+        <path d="M318.48,113.16c0,11.67-2.96,20.21-8.89,25.62-5.93,5.41-15,8.12-27.22,8.12-4.48,0-8.84-.37-13.09-1.12-4.25-.75-8.1-1.73-11.55-2.94l3.08-14.42c2.89,1.21,6.18,2.19,9.87,2.94,3.68.75,7.67,1.12,11.97,1.12,6.81,0,11.66-1.4,14.56-4.2,2.89-2.8,4.34-6.95,4.34-12.46v-2.8c-1.68.84-3.9,1.68-6.65,2.52-2.75.84-5.9,1.26-9.45,1.26-4.67,0-8.94-.75-12.81-2.24-3.87-1.49-7.19-3.69-9.94-6.58-2.75-2.89-4.9-6.51-6.44-10.85-1.54-4.34-2.31-9.36-2.31-15.05,0-5.32.82-10.22,2.45-14.7,1.63-4.48,4.01-8.31,7.14-11.48,3.13-3.17,6.93-5.65,11.41-7.42,4.48-1.77,9.56-2.66,15.26-2.66s10.73.42,15.68,1.26c4.94.84,9.14,1.73,12.6,2.66v63.42ZM271.31,82.08c0,7.19,1.56,12.44,4.69,15.75,3.13,3.31,7.16,4.97,12.11,4.97,2.71,0,5.25-.37,7.63-1.12,2.38-.75,4.32-1.63,5.81-2.66v-37.94c-1.21-.28-2.71-.54-4.48-.77-1.77-.23-4.01-.35-6.72-.35-6.16,0-10.87,2.03-14.14,6.09-3.27,4.06-4.9,9.4-4.9,16.03Z"/>
+        <path d="M327.58,84.32c0-6.44.96-12.09,2.87-16.94,1.91-4.85,4.46-8.89,7.63-12.11,3.17-3.22,6.81-5.65,10.92-7.28,4.1-1.63,8.3-2.45,12.6-2.45,10.08,0,17.94,3.13,23.58,9.38,5.65,6.25,8.47,15.59,8.47,28,0,.93-.02,1.98-.07,3.15-.05,1.17-.12,2.22-.21,3.15h-48.29c.47,5.88,2.54,10.43,6.23,13.65,3.68,3.22,9.03,4.83,16.03,4.83,4.1,0,7.86-.37,11.27-1.12,3.41-.75,6.09-1.54,8.05-2.38l2.24,13.86c-.93.47-2.22.96-3.85,1.47-1.63.51-3.5.98-5.6,1.4-2.1.42-4.36.77-6.79,1.05-2.43.28-4.9.42-7.42.42-6.44,0-12.04-.96-16.8-2.87-4.76-1.91-8.68-4.57-11.76-7.98-3.08-3.41-5.37-7.42-6.86-12.04-1.49-4.62-2.24-9.68-2.24-15.19ZM376.71,76.76c0-2.33-.33-4.55-.98-6.65-.65-2.1-1.61-3.92-2.87-5.46-1.26-1.54-2.8-2.75-4.62-3.64-1.82-.89-3.99-1.33-6.51-1.33s-4.9.49-6.86,1.47c-1.96.98-3.62,2.26-4.97,3.85-1.35,1.59-2.4,3.41-3.15,5.46-.75,2.05-1.26,4.15-1.54,6.3h31.49Z"/>
+        <path d="M403.16,49.74c3.26-.93,7.51-1.82,12.74-2.66,5.22-.84,11.01-1.26,17.36-1.26,5.97,0,10.96.82,14.98,2.45,4.01,1.63,7.21,3.92,9.59,6.86s4.06,6.49,5.04,10.64c.98,4.15,1.47,8.7,1.47,13.65v41.16h-16.94v-38.5c0-3.92-.26-7.26-.77-10.01-.51-2.75-1.35-4.99-2.52-6.72-1.17-1.73-2.75-2.99-4.76-3.78-2.01-.79-4.46-1.19-7.35-1.19-2.15,0-4.39.14-6.72.42-2.33.28-4.06.51-5.18.7v59.08h-16.94V49.74Z"/>
+        <path d="M506.46,11.94c3.92,0,7.37.35,10.36,1.05,2.99.7,5.22,1.33,6.72,1.89l-3.22,14c-1.59-.75-3.43-1.35-5.53-1.82-2.1-.47-4.36-.7-6.79-.7-2.71,0-4.99.4-6.86,1.19-1.87.79-3.36,1.89-4.48,3.29s-1.91,3.1-2.38,5.11c-.47,2.01-.7,4.18-.7,6.51v4.9h26.59v14.14h-26.59v59.08h-16.94V42.18c0-9.43,2.47-16.82,7.42-22.19,4.94-5.37,12.41-8.05,22.39-8.05Z"/>
+        <path d="M597.58,47.36c-7.55,27.81-16.3,53.01-26.27,75.6-1.87,4.2-3.78,7.79-5.74,10.78-1.96,2.99-4.16,5.46-6.59,7.42-2.43,1.96-5.14,3.38-8.13,4.27-2.99.89-6.44,1.33-10.37,1.33-2.62,0-5.21-.28-7.78-.84-2.57-.56-4.51-1.17-5.82-1.82l3.08-13.58c3.37,1.31,6.7,1.96,9.98,1.96,4.41,0,7.85-1.05,10.33-3.15,2.48-2.1,4.66-5.34,6.54-9.73-5.34-10.27-10.47-21.47-15.39-33.6-4.92-12.13-9.3-25.01-13.14-38.64h18.06c.94,3.92,2.08,8.17,3.44,12.74,1.36,4.57,2.83,9.22,4.43,13.93,1.59,4.71,3.28,9.4,5.06,14.07,1.78,4.67,3.56,9.01,5.34,13.02,2.97-8.31,5.76-17.15,8.36-26.53,2.6-9.38,4.97-18.46,7.1-27.23h17.5Z"/>
+      </g>
+      <g>
+        <path fill="#5bd1ff" d="M125.82,74.2c-1.94-20.81-13.23-38.34-31.07-48.91-16.7-9.89-37.86-10.99-55.82-3.6-.78,2.17.64,3.97.66,5.9l.22,31.38c12.73-13.2,32.44-13.17,44.7-1.85,5.53,5.11,9.46,12.48,9.62,19.77v51.62c.07,16.45,15.26,31.4,31.35,30.27.21-.2.79-.51.78-1.17l-.19-46.11c-.05-12.69.91-24.82-.25-37.3Z"/>
+        <path fill="#004ac1" d="M86.27,100.41c-12.35,13.11-31.91,13.76-44.91,1.45-4.72-4.47-7.5-10.79-9-17.29l-.11-55.73C29.9,12.08,17.19.05,0,0l.73,84.81c1.65,24.89,18.74,45.53,41.26,53.66,15.1,5.45,30.73,4.8,45.69-1.17-.98-4.24-1.21-8.23-1.24-12.7l-.18-24.2Z"/>
+      </g>
+    </svg>
+    <p>© 2026 Agenfy. Agendamento online feito para o Brasil.</p>
+  </div>
+</footer>
+
+<script>
+  /* ---------- endpoint da lista de espera (Cloudflare Pages Function) ---------- */
+  const WAITLIST_ENDPOINT = "/api/waitlist";
+
+  function scrollToForm(){
+    document.getElementById('emailInput').focus();
+    document.querySelector('.hero').scrollIntoView({behavior:'smooth'});
+  }
+
+  function isValidEmail(v){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  async function handleSubmit(emailInput, btn, errorEl, successEl, formEl, honeypotInput){
+    const email = emailInput.value.trim();
+    if(!isValidEmail(email)){
+      errorEl.textContent = 'Digite um e-mail válido para continuar.';
+      errorEl.style.display = 'block';
+      emailInput.focus();
+      return;
+    }
+    errorEl.style.display = 'none';
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = 'Enviando...';
+
+    try{
+      const res = await fetch(WAITLIST_ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          email,
+          company: honeypotInput ? honeypotInput.value : '',
+          source: 'landing-agenfy'
+        })
+      });
+
+      if(!res.ok){
+        const data = await res.json().catch(()=>({}));
+        throw new Error(data.error || 'Não foi possível cadastrar seu e-mail agora.');
+      }
+
+      formEl.style.display = 'none';
+      successEl.style.display = 'flex';
+    }catch(err){
+      errorEl.textContent = 'Algo deu errado. Tente novamente em instantes.';
+      errorEl.style.display = 'block';
+    }finally{
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
+
+  document.getElementById('waitlistForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    handleSubmit(
+      document.getElementById('emailInput'),
+      document.getElementById('submitBtn'),
+      document.getElementById('formError'),
+      document.getElementById('formSuccess'),
+      this,
+      document.getElementById('hp1')
+    );
+  });
+
+  document.getElementById('waitlistForm2').addEventListener('submit', function(e){
+    e.preventDefault();
+    handleSubmit(
+      document.getElementById('emailInput2'),
+      document.getElementById('submitBtn2'),
+      document.getElementById('formError2'),
+      document.getElementById('formSuccess2'),
+      this,
+      document.getElementById('hp2')
+    );
+  });
+
+  /* ---------- calculadora de custo do no-show ---------- */
+  const noshowRange = document.getElementById('noshowRange');
+  const ticketRange = document.getElementById('ticketRange');
+  const noshowVal = document.getElementById('noshowVal');
+  const ticketVal = document.getElementById('ticketVal');
+  const lossResult = document.getElementById('lossResult');
+  const rs = document.querySelector('.calc-result .rs');
+
+  function fmtBRL(n){
+    return 'R$ ' + n.toLocaleString('pt-BR', {maximumFractionDigits:0});
+  }
+
+  function updateCalc(){
+    const noshow = parseInt(noshowRange.value, 10);
+    const ticket = parseInt(ticketRange.value, 10);
+    noshowVal.textContent = noshow;
+    ticketVal.textContent = fmtBRL(ticket);
+    const annual = noshow * ticket * 12;
+    lossResult.textContent = fmtBRL(annual);
+    rs.textContent = `${noshow} faltas × ${fmtBRL(ticket)} × 12 meses`;
+  }
+  noshowRange.addEventListener('input', updateCalc);
+  ticketRange.addEventListener('input', updateCalc);
+  updateCalc();
+</script>
+</body>
+</html>
